@@ -5,8 +5,29 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Registro COE</title>
   <style>
-    body{font-family:Arial;background:#0b0f14;color:#eaf0ff;margin:0;padding:24px}
-    .card{max-width:560px;margin:0 auto;background:#121a24;padding:20px;border-radius:14px;border:1px solid #223047}
+    body{
+      font-family:Arial;
+      margin:0;
+      padding:24px;
+      color:#eaf0ff;
+
+      /* Fundo com a imagem + escurecimento para manter legível */
+      background:
+        linear-gradient(rgba(11,15,20,0.88), rgba(11,15,20,0.88)),
+        url("coe.png") no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .card{
+      max-width:560px;
+      margin:0 auto;
+      background:rgba(18,26,36,0.92);
+      padding:20px;
+      border-radius:14px;
+      border:1px solid #223047;
+      backdrop-filter: blur(2px);
+    }
+
     h1{margin:0 0 10px 0;font-size:20px}
     label{display:block;margin:12px 0 6px}
     input,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #2a3a55;background:#0b0f14;color:#eaf0ff}
