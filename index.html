@@ -2,176 +2,181 @@
 <html lang="pt-br">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>📘 Prova Militar - GATE</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prova GATE</title>
 
 <style>
+:root{
+  --bg:#0b0f14;
+  --card:#121a24;
+  --border:#223047;
+  --input:#0e141d;
+  --blue:#2b6fff;
+  --ok:#7CFFB2;
+  --err:#FF7C7C;
+}
+*{box-sizing:border-box}
 body{
   margin:0;
-  padding:20px;
-  font-family:Segoe UI, Arial, sans-serif;
-  background:#0b0f14;
+  padding:24px;
+  font-family:Segoe UI,Arial,sans-serif;
+  background:var(--bg);
   color:#eaf0ff;
 }
 .card{
-  max-width:800px;
+  max-width:850px;
   margin:auto;
-  background:#121a24;
-  border-radius:16px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
   padding:24px;
-  border:1px solid #223047;
 }
-h1,h2{margin-top:0}
-label{display:block;margin:12px 0 6px}
+h1{text-align:center;margin-top:0}
+.timer{
+  text-align:center;
+  font-size:18px;
+  margin-bottom:20px;
+  color:#ffcc66;
+}
+label{display:block;margin-top:16px}
 input{
   width:100%;
-  padding:12px;
+  padding:10px;
   border-radius:12px;
-  border:1px solid #223047;
-  background:#0e141d;
+  border:1px solid var(--border);
+  background:var(--input);
   color:#fff;
 }
+.question{
+  margin-top:24px;
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+.question p{margin:0 0 10px}
 button{
-  margin-top:20px;
-  padding:14px;
   width:100%;
+  margin-top:24px;
+  padding:14px;
   border:none;
   border-radius:14px;
-  background:#2b6fff;
+  background:var(--blue);
   color:#fff;
-  font-size:15px;
+  font-size:16px;
   font-weight:700;
   cursor:pointer;
 }
-.question{
-  margin-top:18px;
-  padding:14px;
-  background:#0e141d;
-  border-radius:12px;
-}
-.timer{
-  font-weight:bold;
-  color:#7CFFB2;
-  margin-bottom:10px;
-}
-.hidden{display:none}
+#msg{text-align:center;margin-top:16px}
+.ok{color:var(--ok)}
+.err{color:var(--err)}
 </style>
 </head>
 
 <body>
 <div class="card">
+<h1>📑 PROVA GATE</h1>
 
-<h1>📘 Prova Operacional – GATE</h1>
-
-<div class="timer" id="timer">⏱️ Tempo restante: 15:00</div>
-
-<label>💬 ID do Discord (obrigatório)</label>
-<input id="discord" placeholder="123456789012345678" required>
-
-<h2>📚 Material de Estudo</h2>
-<p>
-<!-- COLE SEU MATERIAL AQUI -->
-• Direitos e deveres do policial militar<br>
-• Código Penal RP<br>
-• Hierarquia e disciplina<br>
-• Conduta operacional<br>
-</p>
-
-<hr>
-
-<form id="prova">
-
-<div class="question">
-<b>1) Qual é a base da hierarquia militar?</b><br>
-<label><input type="radio" name="q1" value="a"> Autoridade</label>
-<label><input type="radio" name="q1" value="b"> Disciplina</label>
-<label><input type="radio" name="q1" value="c"> Hierarquia e disciplina</label>
+<div class="timer">
+⏱️ Tempo restante: <span id="time">20:00</span>
 </div>
 
-<div class="question">
-<b>2) O policial deve agir sempre de forma:</b><br>
-<label><input type="radio" name="q2" value="a"> Parcial</label>
-<label><input type="radio" name="q2" value="b"> Imparcial</label>
-<label><input type="radio" name="q2" value="c"> Agressiva</label>
-</div>
+<label>ID do Discord (obrigatório)</label>
+<input id="discord" placeholder="Ex: 123456789012345678">
 
-<!-- ADICIONE MAIS QUESTÕES AQUI -->
+<form id="prova"></form>
 
-<button type="submit">📨 Enviar Prova</button>
-
-</form>
-
-<div id="resultado"></div>
-
+<button onclick="enviar()">Enviar Prova</button>
+<div id="msg"></div>
 </div>
 
 <script>
-const WEBHOOK = "https://discord.com/api/webhooks/1461806116987212071/LF2QtlSC7wpwHHiMPZsGWgn9orRG4BCjS2r5GRa0f3GRAndohmirBYnC-QTvPddDum8q";
+const TEMPO_TOTAL = 20 * 60; // 20 minutos
+let tempo = TEMPO_TOTAL;
+let intervalo;
 
-const respostas = {
-  q1:"c",
-  q2:"b"
-};
+const webhook = "https://discord.com/api/webhooks/1461806116987212071/LF2QtlSC7wpwHHiMPZsGWgn9orRG4BCjS2r5GRa0f3GRAndohmirBYnC-QTvPddDum8q";
 
-let tempo = 15 * 60;
-const timerEl = document.getElementById("timer");
+// GABARITO
+const questoes = [
+["A prática de corrupção é:", "Extremamente inadmissível", "Permitida", "Opcional", "Aceitável", 0],
+["O policial deve obedecer:", "A hierarquia", "Somente civis", "A imprensa", "Qualquer pessoa", 0],
+["O CPPM regula:", "Conduta militar", "Somente crimes civis", "Apenas trânsito", "Economia", 0],
+["Ordem ilegal deve ser:", "Questionada", "Cumprida", "Ignorada", "Divulgada", 0],
+["Infração leve gera:", "Multa", "Prisão", "Exoneração", "Nada", 0],
+["O policial pode se omitir?", "Nunca", "Sempre", "Às vezes", "Se quiser", 0],
+["Uso da força deve ser:", "Proporcional", "Excessivo", "Livre", "Irrestrito", 0],
+["Hierarquia garante:", "Disciplina", "Desordem", "Caos", "Impunidade", 0],
+["Quem viola o CPPM sofre:", "Punição", "Promoção", "Benefício", "Nada", 0],
+["Lealdade institucional é:", "Obrigatória", "Opcional", "Temporária", "Irrelevante", 0],
+["Transgressão é:", "Infração disciplinar", "Elogio", "Medalha", "Promoção", 0],
+["O policial deve proteger:", "A vida", "Somente bens", "A si mesmo", "A corporação apenas", 0],
+["A ordem obscura deve ser:", "Esclarecida", "Cumprida sem questionar", "Ignorada", "Divulgada", 0],
+["O policial responde por omissão?", "Sim", "Não", "Nunca", "Somente civil", 0],
+["Hierarquia serve para:", "Organização", "Abuso", "Favorecimento", "Confusão", 0],
+["Conduta ética é:", "Obrigatória", "Opcional", "Rara", "Punível", 0],
+["Disciplina é base da:", "Instituição", "Anarquia", "Desordem", "Fraude", 0],
+["Quem desrespeita regras:", "É punido", "É premiado", "Nada sofre", "É promovido", 0],
+["A autoridade vem da:", "Função", "Força física", "Ameaça", "Arma", 0],
+["O policial deve agir com:", "Imparcialidade", "Favorecimento", "Interesse próprio", "Vantagem", 0]
+];
 
-const cron = setInterval(()=>{
+// MONTAR PROVA
+const form = document.getElementById("prova");
+questoes.forEach((q,i)=>{
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `<p><strong>${i+1}.</strong> ${q[0]}</p>` +
+    q.slice(1,5).map((alt,j)=>
+      `<label><input type="radio" name="q${i}" value="${j}"> ${alt}</label>`
+    ).join("");
+  form.appendChild(div);
+});
+
+// TIMER
+intervalo = setInterval(()=>{
   tempo--;
-  let m = String(Math.floor(tempo/60)).padStart(2,"0");
-  let s = String(tempo%60).padStart(2,"0");
-  timerEl.textContent = `⏱️ Tempo restante: ${m}:${s}`;
+  const m = String(Math.floor(tempo/60)).padStart(2,"0");
+  const s = String(tempo%60).padStart(2,"0");
+  document.getElementById("time").textContent = `${m}:${s}`;
   if(tempo<=0){
-    clearInterval(cron);
-    document.getElementById("prova").requestSubmit();
+    clearInterval(intervalo);
+    enviar();
   }
 },1000);
 
-document.getElementById("prova").addEventListener("submit", async e=>{
-  e.preventDefault();
-
+// ENVIO
+function enviar(){
+  clearInterval(intervalo);
   const discord = document.getElementById("discord").value.trim();
-  if(discord.length < 17){
-    alert("ID do Discord obrigatório!");
+  if(discord.length<17){
+    alert("ID do Discord obrigatório.");
     return;
   }
 
   let acertos = 0;
-  let total = Object.keys(respostas).length;
-
-  for(let q in respostas){
-    const marcada = document.querySelector(`input[name="${q}"]:checked`);
-    if(marcada && marcada.value === respostas[q]){
-      acertos++;
-    }
-  }
-
-  const nota = ((acertos/total)*10).toFixed(1);
-
-  const payload = {
-    content:`📊 **RESULTADO DE PROVA – GATE**`,
-    embeds:[{
-      title:"Resultado Final",
-      color:3447003,
-      description:
-        `💬 **Discord:** <@${discord}>\n`+
-        `📝 **Acertos:** ${acertos}/${total}\n`+
-        `📈 **Nota:** ${nota}/10`,
-      footer:{text:"Sistema de Avaliação Militar"}
-    }]
-  };
-
-  await fetch(WEBHOOK,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(payload)
+  questoes.forEach((q,i)=>{
+    const r = document.querySelector(`input[name=q${i}]:checked`);
+    if(r && Number(r.value)===q[5]) acertos++;
   });
 
-  document.getElementById("resultado").innerHTML =
-    `<h2>✅ Prova enviada!</h2><p>Sua nota: <b>${nota}</b></p>`;
+  const status = acertos>=15 ? "APROVADO ✅" : "REPROVADO ❌";
 
-});
+  fetch(webhook,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      content:
+`📊 **RESULTADO PROVA GATE**
+👤 <@${discord}>
+📝 Acertos: ${acertos}/20
+📈 Nota final: ${acertos}
+📌 Status: ${status}`
+    })
+  });
+
+  document.getElementById("msg").innerHTML =
+    `<p class="${acertos>=15?'ok':'err'}">Prova finalizada. Resultado enviado.</p>`;
+}
 </script>
-
 </body>
 </html>
