@@ -1,177 +1,177 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>📋 Registro ROTA</title>
-  <style>
-    :root {
-      --bg:#0b0f14;
-      --card:#121a24;
-      --border:#223047;
-      --input:#0e141d;
-      --blue:#2b6fff;
-      --blue2:#4c84ff;
-      --ok:#7CFFB2;
-      --err:#FF7C7C;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin:0; padding:24px;
-      font-family:"Segoe UI", Arial, sans-serif;
-      color:#eaf0ff;
-      background: linear-gradient(rgba(8,12,18,.9), rgba(8,12,18,.9)), url("coe.jpg") no-repeat center center fixed;
-      background-size:cover;
-    }
-    .card {
-      max-width:580px; margin:auto;
-      background:rgba(18,26,36,.95);
-      border:1px solid var(--border);
-      border-radius:18px; padding:24px;
-      box-shadow:0 0 40px rgba(0,0,0,.6);
-      backdrop-filter:blur(4px);
-    }
-    h1 {margin:0 0 6px;font-size:22px}
-    .sub {font-size:13px;color:#9fb3ff;margin-bottom:16px}
-    label { display:block; margin:14px 0 6px; font-size:13px; color:#cfd9ff; }
-    input {
-      width:100%; padding:12px 14px;
-      border-radius:14px; border:1px solid var(--border);
-      background:var(--input); color:#fff; font-size:14px;
-      outline:none; transition:.25s;
-    }
-    input::placeholder {color:#6c7aa5}
-    input:focus {
-      border-color:var(--blue2);
-      box-shadow:0 0 0 2px rgba(76,132,255,.25);
-    }
-    button {
-      width:100%; margin-top:20px; padding:14px;
-      border:none; border-radius:16px; font-size:15px; font-weight:700;
-      color:#fff; cursor:pointer;
-      background:linear-gradient(135deg, var(--blue), var(--blue2));
-      box-shadow:0 6px 20px rgba(43,111,255,.45);
-      transition:.25s;
-    }
-    button:hover {
-      transform:translateY(-1px);
-      box-shadow:0 10px 28px rgba(43,111,255,.6);
-    }
-    #msg {margin-top:14px;font-size:14px}
-    .ok {color:var(--ok)}
-    .err {color:var(--err)}
-    .hp {display:none}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📘 Prova Militar - GATE</title>
+
+<style>
+body{
+  margin:0;
+  padding:20px;
+  font-family:Segoe UI, Arial, sans-serif;
+  background:#0b0f14;
+  color:#eaf0ff;
+}
+.card{
+  max-width:800px;
+  margin:auto;
+  background:#121a24;
+  border-radius:16px;
+  padding:24px;
+  border:1px solid #223047;
+}
+h1,h2{margin-top:0}
+label{display:block;margin:12px 0 6px}
+input{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #223047;
+  background:#0e141d;
+  color:#fff;
+}
+button{
+  margin-top:20px;
+  padding:14px;
+  width:100%;
+  border:none;
+  border-radius:14px;
+  background:#2b6fff;
+  color:#fff;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+}
+.question{
+  margin-top:18px;
+  padding:14px;
+  background:#0e141d;
+  border-radius:12px;
+}
+.timer{
+  font-weight:bold;
+  color:#7CFFB2;
+  margin-bottom:10px;
+}
+.hidden{display:none}
+</style>
 </head>
+
 <body>
-  <div class="card">
-    <h1>📋 Registro ROTA</h1>
-    <div class="sub">Preencha corretamente para liberação da entrevista</div>
-    <form id="form">
-      <input class="hp" name="website" autocomplete="off">
-      
-      <label for="nome">👤 Nome</label>
-      <input id="nome" name="nome" required placeholder="Nome completo" autocomplete="off">
-      
-      <label for="passaporte">🪪 Passaporte</label>
-      <input id="passaporte" name="passaporte" required inputmode="numeric" placeholder="Somente números" autocomplete="off">
-      
-      <label for="horario">⏰ Horário disponível para entrevista</label>
-      <input id="horario" name="horario" required placeholder="Ex: 19h às 22h" autocomplete="off">
-      
-      <label for="discord_id">💬 ID Discord (opcional)</label>
-      <input id="discord_id" name="discord_id" inputmode="numeric" placeholder="123456789012345678" autocomplete="off">
-      
-      <button type="submit">Enviar para Triagem</button>
-      <div id="msg"></div>
-    </form>
-  </div>
-  <script>
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/1450882766043353110/LkpOL01stYbDhvn0jSO7gDU77fZsCXoCcU-e80lhIseJfe9C4cmPj2LCFRSkAOsdRrun";
-    const TRIAGEM_CHANNEL_ID = "1450882352137109544";
-    const RATE_LIMIT = 2 * 60 * 1000; // 2 minutos
+<div class="card">
 
-    document.getElementById("form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const msg = document.getElementById("msg");
-      const btn = e.target.querySelector("button");
-      
-      // anti-spam
-      const last = localStorage.getItem("rota_last_send");
-      if (last && Date.now() - last < RATE_LIMIT) {
-        msg.textContent = "⏱️ Aguarde alguns minutos antes de reenviar.";
-        msg.className = "err";
-        return;
-      }
+<h1>📘 Prova Operacional – GATE</h1>
 
-      const fd = new FormData(e.target);
+<div class="timer" id="timer">⏱️ Tempo restante: 15:00</div>
 
-      // honeypot
-      if (fd.get("website")) return;
+<label>💬 ID do Discord (obrigatório)</label>
+<input id="discord" placeholder="123456789012345678" required>
 
-      const nome = fd.get("nome").trim();
-      const passaporte = fd.get("passaporte").trim();
-      const horario = fd.get("horario").trim();
-      const discord_id = (fd.get("discord_id") || "").trim();
+<h2>📚 Material de Estudo</h2>
+<p>
+<!-- COLE SEU MATERIAL AQUI -->
+• Direitos e deveres do policial militar<br>
+• Código Penal RP<br>
+• Hierarquia e disciplina<br>
+• Conduta operacional<br>
+</p>
 
-      // validações
-      if (nome.length < 3) {
-        msg.textContent = "❌ Nome inválido.";
-        msg.className = "err";
-        return;
-      }
-      if (!/^\d+$/.test(passaporte)) {
-        msg.textContent = "❌ Passaporte deve conter apenas números.";
-        msg.className = "err";
-        return;
-      }
-      if (discord_id && (discord_id.length < 17 || discord_id.length > 19)) {
-        msg.textContent = "❌ ID do Discord inválido.";
-        msg.className = "err";
-        return;
-      }
+<hr>
 
-      const mention = discord_id ? `<@${discord_id}>` : "Não informado";
-      
-      const payload = {
-        content: `🧠 **REGISTRO ROTA** → <#${TRIAGEM_CHANNEL_ID}>`,
-        embeds: [{
-          title: "Solicitação para Triagem",
-          color: 3447003,
-          description:
-            `👤 **Nome:** ${nome}\n` +
-            `🪪 **Passaporte:** ${passaporte}\n` +
-            `⏰ **Horário disponível:** ${horario}\n` +
-            `💬 **Discord:** ${mention}`,
-          footer: { text: "Use ✅ para aprovar | ❌ para reprovar" }
-        }]
-      };
+<form id="prova">
 
-      msg.textContent = "⏳ Enviando...";
-      msg.className = "";
-      btn.disabled = true;
-      btn.textContent = "Enviando...";
+<div class="question">
+<b>1) Qual é a base da hierarquia militar?</b><br>
+<label><input type="radio" name="q1" value="a"> Autoridade</label>
+<label><input type="radio" name="q1" value="b"> Disciplina</label>
+<label><input type="radio" name="q1" value="c"> Hierarquia e disciplina</label>
+</div>
 
-      try {
-        const r = await fetch(WEBHOOK_URL, {
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify(payload)
-        });
-        if (!r.ok) throw new Error();
-        localStorage.setItem("rota_last_send", Date.now());
-        msg.textContent = "✅ Enviado para triagem!";
-        msg.className = "ok";
-        e.target.reset();
-        btn.textContent = "Enviar para Triagem";
-        btn.disabled = false;
-      } catch {
-        msg.textContent = "❌ Erro ao enviar.";
-        msg.className = "err";
-        btn.textContent = "Enviar para Triagem";
-        btn.disabled = false;
-      }
-    });
-  </script>
+<div class="question">
+<b>2) O policial deve agir sempre de forma:</b><br>
+<label><input type="radio" name="q2" value="a"> Parcial</label>
+<label><input type="radio" name="q2" value="b"> Imparcial</label>
+<label><input type="radio" name="q2" value="c"> Agressiva</label>
+</div>
+
+<!-- ADICIONE MAIS QUESTÕES AQUI -->
+
+<button type="submit">📨 Enviar Prova</button>
+
+</form>
+
+<div id="resultado"></div>
+
+</div>
+
+<script>
+const WEBHOOK = "https://discord.com/api/webhooks/1461806116987212071/LF2QtlSC7wpwHHiMPZsGWgn9orRG4BCjS2r5GRa0f3GRAndohmirBYnC-QTvPddDum8q";
+
+const respostas = {
+  q1:"c",
+  q2:"b"
+};
+
+let tempo = 15 * 60;
+const timerEl = document.getElementById("timer");
+
+const cron = setInterval(()=>{
+  tempo--;
+  let m = String(Math.floor(tempo/60)).padStart(2,"0");
+  let s = String(tempo%60).padStart(2,"0");
+  timerEl.textContent = `⏱️ Tempo restante: ${m}:${s}`;
+  if(tempo<=0){
+    clearInterval(cron);
+    document.getElementById("prova").requestSubmit();
+  }
+},1000);
+
+document.getElementById("prova").addEventListener("submit", async e=>{
+  e.preventDefault();
+
+  const discord = document.getElementById("discord").value.trim();
+  if(discord.length < 17){
+    alert("ID do Discord obrigatório!");
+    return;
+  }
+
+  let acertos = 0;
+  let total = Object.keys(respostas).length;
+
+  for(let q in respostas){
+    const marcada = document.querySelector(`input[name="${q}"]:checked`);
+    if(marcada && marcada.value === respostas[q]){
+      acertos++;
+    }
+  }
+
+  const nota = ((acertos/total)*10).toFixed(1);
+
+  const payload = {
+    content:`📊 **RESULTADO DE PROVA – GATE**`,
+    embeds:[{
+      title:"Resultado Final",
+      color:3447003,
+      description:
+        `💬 **Discord:** <@${discord}>\n`+
+        `📝 **Acertos:** ${acertos}/${total}\n`+
+        `📈 **Nota:** ${nota}/10`,
+      footer:{text:"Sistema de Avaliação Militar"}
+    }]
+  };
+
+  await fetch(WEBHOOK,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  });
+
+  document.getElementById("resultado").innerHTML =
+    `<h2>✅ Prova enviada!</h2><p>Sua nota: <b>${nota}</b></p>`;
+
+});
+</script>
+
 </body>
 </html>
