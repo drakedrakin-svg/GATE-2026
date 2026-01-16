@@ -90,7 +90,17 @@ button{
 </div>
 
 <script>
-const TEMPO_TOTAL = 20 * 60; // 20 minutos
+// 🔒 BLOQUEIO DE SEGUNDA TENTATIVA
+if(localStorage.getItem("gate_prova_finalizada")){
+  document.body.innerHTML =
+    "<h2 style='text-align:center;color:#ff7c7c;margin-top:80px'>❌ Você já realizou esta prova.</h2>";
+  throw new Error("Prova já realizada");
+}
+
+// ⚠️ AVISO AO SAIR
+window.onbeforeunload = () => "Ao sair, sua prova será perdida.";
+
+const TEMPO_TOTAL = 20 * 60;
 let tempo = TEMPO_TOTAL;
 let intervalo;
 
@@ -125,7 +135,8 @@ const form = document.getElementById("prova");
 questoes.forEach((q,i)=>{
   const div = document.createElement("div");
   div.className = "question";
-  div.innerHTML = `<p><strong>${i+1}.</strong> ${q[0]}</p>` +
+  div.innerHTML =
+    `<p><strong>${i+1}.</strong> ${q[0]}</p>` +
     q.slice(1,5).map((alt,j)=>
       `<label><input type="radio" name="q${i}" value="${j}"> ${alt}</label>`
     ).join("");
@@ -147,8 +158,10 @@ intervalo = setInterval(()=>{
 // ENVIO
 function enviar(){
   clearInterval(intervalo);
+  window.onbeforeunload = null;
+
   const discord = document.getElementById("discord").value.trim();
-  if(discord.length<17){
+  if(discord.length < 17){
     alert("ID do Discord obrigatório.");
     return;
   }
@@ -156,26 +169,30 @@ function enviar(){
   let acertos = 0;
   questoes.forEach((q,i)=>{
     const r = document.querySelector(`input[name=q${i}]:checked`);
-    if(r && Number(r.value)===q[5]) acertos++;
+    if(r && Number(r.value) === q[5]) acertos++;
   });
 
-  const status = acertos>=15 ? "APROVADO ✅" : "REPROVADO ❌";
+  const status = acertos >= 15 ? "APROVADO ✅" : "REPROVADO ❌";
+  const data = new Date().toLocaleString("pt-BR");
 
   fetch(webhook,{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({
       content:
-`📊 **RESULTADO PROVA GATE**
+`📊 **RESULTADO – PROVA GATE**
 👤 <@${discord}>
-📝 Acertos: ${acertos}/20
-📈 Nota final: ${acertos}
-📌 Status: ${status}`
+📝 Nota: ${acertos}/20
+📌 Status: ${status}
+🕒 Data: ${data}
+💻 Navegador: ${navigator.userAgent}`
     })
   });
 
+  localStorage.setItem("gate_prova_finalizada","true");
+
   document.getElementById("msg").innerHTML =
-    `<p class="${acertos>=15?'ok':'err'}">Prova finalizada. Resultado enviado.</p>`;
+    `<p class="${acertos>=15?'ok':'err'}">Prova finalizada. Resultado enviado à coordenação.</p>`;
 }
 </script>
 </body>
